@@ -1,6 +1,8 @@
 package bigint
 
-import "strings"
+import (
+	"strings"
+)
 
 type BigInt struct{
 	len int
@@ -71,4 +73,43 @@ func (b *BigInt) Add(num *BigInt) *BigInt{
 		ret = ret[1:]
 	}
 	return &BigInt{len:len(ret), digits:ret}
+}
+
+//multiplySingle 大整数乘以单个数字
+func (b *BigInt) multiplySingle(digit byte) *BigInt{
+	digits := make([]byte, b.len+1, b.len+1)
+	digits[0] = 0
+
+	carry := byte(0)
+	for i:= b.len-1; i>=0; i--{
+		temp := b.digits[i] * digit + carry
+
+		if temp >= 10{
+			digits[1+i] = temp%10
+			carry = byte(temp/10)
+		}else{
+			digits[1+i] = temp
+			carry = 0
+		}
+	}
+	digits[0] = carry
+	if digits[0] != 0 {
+		return &BigInt{len(digits), digits}
+	}else{
+		return &BigInt{len(digits) -1 , digits[1:]}
+	}
+}
+
+//
+func (b *BigInt) Multiply(bigInt *BigInt) *BigInt{
+	result :=New("0")
+	for i:=0; i<bigInt.len; i++{
+		temp := b.multiplySingle(bigInt.digits[bigInt.len-1-i])
+		for j:=0; j<i; j++{
+			temp.digits = append(temp.digits, 0)
+			temp.len = temp.len + 1
+		}
+		result = result.Add(temp)
+	}
+	return result
 }
