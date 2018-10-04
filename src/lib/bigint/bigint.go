@@ -9,7 +9,15 @@ type BigInt struct{
 	digits []byte
 }
 
+func (b *BigInt) Digits() []byte{
+	return b.digits
+}
 
+func (b *BigInt) Len() int{
+	return b.len
+}
+
+//New 构造函数
 func New(number string) *BigInt{
 
 	digits := make([]byte, 0,0)
@@ -75,8 +83,56 @@ func (b *BigInt) Add(num *BigInt) *BigInt{
 	return &BigInt{len:len(ret), digits:ret}
 }
 
-//multiplySingle 大整数乘以单个数字
-func (b *BigInt) multiplySingle(digit byte) *BigInt{
+//Compare 比较大小
+func (b *BigInt) Compare(bigInt *BigInt) int{
+	if b.len > bigInt.len{
+		return 1
+	}else if b.len < bigInt.len{
+		return -1
+	}else{
+		for i :=0; i<b.len; i++{
+			if b.digits[i] < bigInt.digits[i]{
+				return -1
+			}else if b.digits[i] > bigInt.digits[i]{
+				return 1
+			}
+		}
+		return 0
+	}
+}
+
+//Subtract 减去参数，要求被减数大于减数
+func (b *BigInt) Subtract(bigInt *BigInt) *BigInt{
+	if b.Compare(bigInt) == -1{
+		panic("要求被减数大于减数")
+	}
+	subtractor := make([]byte, b.len, b.len)
+	//对齐
+	for i:=0; i<bigInt.len; i++{
+		subtractor[b.len - bigInt.len + i] = bigInt.digits[i]
+	}
+	borrow := byte(0)
+	ret := make([]byte, b.len, b.len)
+	for i:=b.len-1; i>=0; i--{
+		if b.digits[i] >= subtractor[i] + borrow {
+			ret[i] = b.digits[i] - subtractor[i] - borrow
+			borrow = 0
+		}else{
+			ret[i] = 10 + b.digits[i] - subtractor[i] - borrow
+			borrow = 1
+		}
+	}
+	for i:=0; i<b.len; i++{
+		if ret[i] != 0{
+			return &BigInt{len(ret[i:]), ret[i:]}
+		}
+	}
+	return &BigInt{len(ret), ret}
+}
+
+
+//MultiplySingle 大整数乘以单个数字
+func (b *BigInt) MultiplySingle(digit byte) *BigInt{
 	digits := make([]byte, b.len+1, b.len+1)
 	digits[0] = 0
 
@@ -100,11 +156,11 @@ func (b *BigInt) multiplySingle(digit byte) *BigInt{
 	}
 }
 
-//
+//Multiply 乘法
 func (b *BigInt) Multiply(bigInt *BigInt) *BigInt{
 	result :=New("0")
 	for i:=0; i<bigInt.len; i++{
-		temp := b.multiplySingle(bigInt.digits[bigInt.len-1-i])
+		temp := b.MultiplySingle(bigInt.digits[bigInt.len-1-i])
 		for j:=0; j<i; j++{
 			temp.digits = append(temp.digits, 0)
 			temp.len = temp.len + 1
@@ -112,4 +168,32 @@ func (b *BigInt) Multiply(bigInt *BigInt) *BigInt{
 		result = result.Add(temp)
 	}
 	return result
+}
+
+//Divided 除法，除以参数,要求被除数大于除数
+func (b * BigInt)Divide(bigInt *BigInt) (result *BigInt, remainder *BigInt){
+
+	//结果最多b.len - bigInt.len位
+	ret := make([]byte,	b.len - bigInt.len + 1, b.len - bigInt.len +1)
+	result = &BigInt{b.len - bigInt.len + 1, ret}
+
+	temp := &BigInt{b.len, b.digits}
+	for i:=b.len - bigInt.len; i>=0;i--{
+		pow :=New("1")
+		for j:=0; j<i;j++{
+			pow = pow.Multiply(New("10"))
+		}
+
+		for j:=byte(0); j<=9;j++{
+			if pow.MultiplySingle(j+1).Multiply(bigInt).Compare(temp) > 0{
+				result.digits[result.len-i-1] = j
+				temp = temp.Subtract(pow.MultiplySingle(j).Multiply(bigInt))
+				break
+			}else{
+				result.digits[result.len-i -1] = 0
+			}
+		}
+	}
+
+	return result, b.Subtract(result.Multiply(bigInt))
 }
