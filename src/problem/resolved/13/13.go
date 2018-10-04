@@ -1,5 +1,12 @@
 package main
 
+import (
+	"fmt"
+	"io/ioutil"
+	"lib/bigint"
+	"strings"
+)
+
 /**
 Large sum
 Work out the first ten digits of the sum of the following one-hundred 50-digit numbers.
@@ -104,3 +111,24 @@ Work out the first ten digits of the sum of the following one-hundred 50-digit n
 20849603980134001723930671666823555245252804609722
 53503534226472524250874054075591789781264330331690
  */
+func main(){
+	 content,err := ioutil.ReadFile("src/file/13.txt")
+	 if err != nil{
+	 	println(err.Error())
+	 	return
+	 }
+
+	 lines := strings.Split(string(content), "\n")
+
+	 bigInt := bigint.New("0")
+	for _,value := range lines{
+		fmt.Println("---------------------------------")
+		bigInt1 := bigint.New(value)
+		fmt.Println(bigInt1.String())
+		fmt.Println(bigInt.String())
+		bigInt = bigInt1.Add(bigInt)
+		fmt.Println(bigInt.String())
+	}
+
+	fmt.Println(bigInt.String()[0:10])
+}
