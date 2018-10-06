@@ -1,6 +1,7 @@
 package bigint
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -196,4 +197,13 @@ func (b * BigInt)Divide(bigInt *BigInt) (result *BigInt, remainder *BigInt){
 	}
 
 	return result, b.Subtract(result.Multiply(bigInt))
+}
+
+func Factorial(num int) *BigInt{
+	bigint := New("1")
+
+	for i:=1;i<=num;i++{
+		bigint = bigint.Multiply(New(strconv.Itoa(i)))
+	}
+	return bigint
 }

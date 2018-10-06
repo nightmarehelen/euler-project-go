@@ -175,5 +175,14 @@ func (p *Prime) GetDivisorCount(number int64) int{
 	return cnt
 }
 
-
+//获取约数列表
+func GetDivisors(number int64) []int64{
+	ret := make([]int64,0,0)
+	for i:=int64(1); i<=number; i++{
+		if number%i == 0{
+			ret = append(ret, i)
+		}
+	}
+	return ret
+}
 
