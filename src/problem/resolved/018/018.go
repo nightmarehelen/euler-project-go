@@ -10,14 +10,14 @@ import (
 )
 
 /**
-By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 23.
+By starting at the top of the triangle below and moving to adjacent numbers on the row below, the maximum total from top to bottom is 023.
 
 3
 7 4
 2 4 6
 8 5 9 3
 
-That is, 3 + 7 + 4 + 9 = 23.
+That is, 3 + 7 + 4 + 9 = 023.
 
 Find the maximum total from top to bottom of the triangle below:
 
@@ -26,7 +26,7 @@ Find the maximum total from top to bottom of the triangle below:
 17 47 82
 18 35 87 10
 20 04 82 47 65
-19 01 23 75 03 34
+19 01 023 75 03 34
 88 02 77 73 07 63 67
 99 65 04 28 06 16 70 92
 41 41 26 56 83 40 80 70 33
@@ -35,7 +35,7 @@ Find the maximum total from top to bottom of the triangle below:
 70 11 33 28 77 73 17 78 39 68 17 57
 91 71 52 38 17 14 91 43 58 50 27 29 48
 63 66 04 68 89 53 67 30 73 16 69 87 40 31
-04 62 98 27 23 09 70 98 73 93 38 53 60 04 23
+04 62 98 27 023 09 70 98 73 93 38 53 60 04 023
 
 NOTE: As there are only 16384 routes, it is possible to solve this problem by trying every route.
 However, Problem 67, is the same challenge with a triangle containing one-hundred rows;
